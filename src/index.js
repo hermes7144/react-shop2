@@ -10,17 +10,18 @@ import ProductDetail from './pages/ProductDetail';
 import NewProduct from './pages/NewProduct';
 import MyCart from './pages/MyCart';
 import NotFound from './pages/NotFound';
+import ProtectedRoute from './pages/ProtectedRoute';
 
 const router = createBrowserRouter([{
-  path:'/',
-  element:<App/>,
+  path: '/',
+  element: <App />,
   errorElement: <NotFound />,
-  children:[
-    {index:true, element:<Home/>},
-    {path:'/products', element:<AllProducts/>},
-    {path:'/products/new', element:<NewProduct/>},
-    {path:'/products/:id', element:<ProductDetail/>},
-    {path:'/carts', element:<MyCart/>}
+  children: [
+    { index: true, element: <Home /> },
+    { path: '/products', element: <AllProducts /> },
+    { path: '/products/new', element: <ProtectedRoute requierAdmin><NewProduct /></ProtectedRoute> },
+    { path: '/products/:id', element: <ProductDetail /> },
+    { path: '/carts', element: <ProtectedRoute><MyCart /></ProtectedRoute> }
   ]
 }])
 
