@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { FaArchive, FaPencilAlt } from 'react-icons/fa';
 import User from './User';
 import Button from './ui/Button';
-import { useAuthContext } from './context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
+import CartStatus from './ui/CartStatus';
 
 export default function Navbar() {
   const { user, login, logout } = useAuthContext();
+  console.log(user);
   return (
     <header className='flex justify-between border-b border-gray-300 p-2'>
       <Link to='/' className='flex items-center text-4xl text-brand'>
@@ -15,7 +17,11 @@ export default function Navbar() {
       </Link>
       <nav className='flex items-center gap-4 font-semibold'>
         <Link to='/products'>Products</Link>
-        {user && <Link to='/carts'>Carts</Link>}
+        {user && (
+          <Link to='/carts'>
+            <CartStatus />
+          </Link>
+        )}
         {user && user.isAdmin && (
           <Link to='/products/new' className='text-2xl'>
             <FaPencilAlt />

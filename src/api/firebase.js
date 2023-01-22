@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { v4 as uuid } from 'uuid'
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
-import { getDatabase, ref, get, set } from "firebase/database";
+import { getDatabase, ref, get, set, remove } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -13,7 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const db = getDatabase(app);
+const database = getDatabase(app);
 
 
 export function login() {
@@ -35,7 +35,7 @@ export function onUserStateChange(callback) {
 }
 
 async function adminUser(user) {
-  return get(ref(db, 'admins')) //
+  return get(ref(database, 'admins')) //
     .then((snapshot) => {
       if (snapshot.exists())
       {
@@ -49,7 +49,7 @@ async function adminUser(user) {
 
 export async function addNewProduct(product, image) {
   const id = uuid();
-  return set(ref(db, `products/${id}`), {
+  return set(ref(database, `products/${id}`), {
     ...product,
     id,
     price: parseInt(product.price),
@@ -59,7 +59,7 @@ export async function addNewProduct(product, image) {
 }
 
 export async function getProducts() {
-  return get(ref(db, 'products'))
+  return get(ref(database, 'products'))
 
     .then((snapshot) => {
       if (snapshot.exists())
@@ -68,5 +68,21 @@ export async function getProducts() {
       }
       return [];
     })
+}
 
+export async function getCart(userId) {
+  return get(ref(database, `carts/${userId}`))
+    .then(snapshot => {
+      const items = snapshot.val() || {};
+      console.log(items);
+      return Object.values(items)
+    })
+}
+
+export async function addOrUpdateToCart(userId, product) {
+  return set(ref(database, `carts/${userId}/${product.id}`), product);
+}
+
+export async function removeFromCart(userId, productId) {
+  return remove(ref(database, `carts/${userId}/${productId}`))
 }
